@@ -1,0 +1,358 @@
+/*
+====================================================================
+📘 JavaScript Lecture 2 – Variables & Data Types
+(Sir’s Thinking Way | First Principle Approach)
+====================================================================
+
+JavaScript is not about syntax memorization.
+It is about learning how to think like an engineer.
+
+If today’s questions make sense to you,
+you will clearly notice the Junior → Senior transition.
+
+====================================================================
+Mindset Reminder (Sir’s Words)
+====================================================================
+
+Agar aaj ke questions ke answers mil gaye,
+tum khud dekhoge junior → senior transition.
+
+====================================================================
+Lecture Philosophy
+====================================================================
+
+- JavaScript sirf syntax nahi hai
+- JavaScript thinking sikhati hai
+- Right question poochna seekhna
+- Answer logically explore karna
+- System-level understanding develop karna
+
+This lecture is research-driven, not random.
+
+====================================================================
+Historical Context – Why JavaScript Feels Simple
+====================================================================
+
+JavaScript creation year: 1995  
+Creator: Brendan Eich  
+Time taken to create JavaScript: ONLY 10 DAYS
+
+This tells us two important things:
+- JavaScript accidental language nahi hai
+- Simplicity intentional hai
+
+Target audience:
+- HTML / CSS developers
+- Not hardcore system programmers
+
+====================================================================
+PART 1: Variables in JavaScript
+====================================================================
+
+Question: Variable kya hota hai?
+
+A variable is a container.
+It stores data inside memory.
+
+--------------------------------------------------------------------
+Modern Way to Create Variables
+--------------------------------------------------------------------
+
+1. let keyword
+
+Example:
+let name = "Rohit";
+console.log(name);
+
+Explanation:
+- name → variable
+- "Rohit" → value
+- console.log() → output ke liye
+
+Run using:
+node index.js
+
+Output:
+Rohit
+
+--------------------------------------------------------------------
+Printing Multiple Values
+--------------------------------------------------------------------
+
+let age = 20;
+console.log(name, age);
+
+Comma se multiple values print hoti hain.
+
+--------------------------------------------------------------------
+Can we change value of let?
+--------------------------------------------------------------------
+
+let age = 20;
+age = 30;
+
+Valid.
+JavaScript pehle 20 store karega,
+phir overwrite karke 30.
+
+--------------------------------------------------------------------
+2. const keyword
+--------------------------------------------------------------------
+
+const account = 1234;
+console.log(account);
+
+Works fine.
+
+Can we change const value?
+
+account = 23;
+
+Error.
+
+Rules of const:
+- Declare + assign together
+- Value cannot be changed later
+
+const without value?
+
+const x;
+
+Error.
+const bolta hai: “Declare karte hi value do”.
+
+--------------------------------------------------------------------
+3. Old Way – var (DO NOT USE)
+--------------------------------------------------------------------
+
+var a = 10;
+console.log(a);
+
+Works, but dangerous.
+
+BIG PROBLEM 1: Re-declaration allowed
+
+var a = 10;
+var a = 50;
+
+No error.
+Same variable multiple times declare ho raha hai.
+Bug factory.
+
+BIG PROBLEM 2: Scope respect nahi karta
+
+if (true) {
+  var x = 20;
+}
+console.log(x);
+
+Still prints 20.
+Common sense violated.
+
+--------------------------------------------------------------------
+Scope Concepts (Sir’s Explanation)
+--------------------------------------------------------------------
+
+Global Scope:
+var b = 30;
+Pure code me accessible.
+
+Functional Scope:
+function test() {
+  var c = 20;
+}
+console.log(c); // Error
+
+var sirf respect karta hai:
+- Global scope
+- Function scope
+
+Block scope (if, for, etc.) ko ignore karta hai.
+
+--------------------------------------------------------------------
+Why let and const are SAFE
+--------------------------------------------------------------------
+
+if (true) {
+  let c = 90;
+}
+console.log(c);
+
+Error: c is not defined.
+
+Correct behavior.
+Variable ki life sirf us block tak.
+
+--------------------------------------------------------------------
+Final Rule (Sir Style)
+--------------------------------------------------------------------
+
+Situation                    Use
+Value change hogi            let
+Value constant rahegi        const
+Old JavaScript               var (avoid)
+
+====================================================================
+PART 2: Data Types in JavaScript
+====================================================================
+
+Question: Data type kya hota hai?
+
+Data type batata hai
+value kis category ki hai.
+
+--------------------------------------------------------------------
+JavaScript Data Types – Overview
+--------------------------------------------------------------------
+
+Primitive Data Types (7):
+- Number
+- String
+- Boolean
+- Undefined
+- Null
+- BigInt
+- Symbol
+
+Non-Primitive Data Types:
+- Array
+- Object
+- Function
+
+Sir ka promise:
+“Array actually array nahi hota JS me”
+(proof later)
+
+====================================================================
+Primitive Data Types – Deep Dive
+====================================================================
+
+1. Number
+
+let a = 10;
+let b = 2.36;
+
+JavaScript me:
+- integer + float dono Number hote hain
+- alag data type nahi hota
+
+Important:
+JavaScript ko type batana nahi padta.
+JS khud decide karta hai.
+
+Reason:
+HTML/CSS developers ke liye easy banana tha.
+
+--------------------------------------------------------------------
+2. String
+--------------------------------------------------------------------
+
+let c = "Strike is coming";
+let d = 'Anjali';
+
+Single quotes aur double quotes dono valid.
+
+--------------------------------------------------------------------
+3. Boolean
+--------------------------------------------------------------------
+
+let isLoggedIn = true;
+let isAdmin = false;
+
+Sirf do values:
+true, false
+
+--------------------------------------------------------------------
+4. Undefined
+--------------------------------------------------------------------
+
+let user;
+console.log(user);
+
+Output:
+undefined
+
+Meaning:
+Variable declared hai,
+value assign nahi hui.
+
+JavaScript automatically undefined deta hai.
+
+const + undefined?
+
+const x;
+
+Error.
+const ko value chahiye at declaration.
+
+--------------------------------------------------------------------
+5. BigInt (Very Important)
+--------------------------------------------------------------------
+
+Problem with Number:
+- Uses 64 bits
+- Max safe integer = 2^53 - 1
+
+Reason:
+Same space integers aur floating points dono ke liye use hota hai.
+
+Solution: BigInt
+
+let n = 123456789012345678901234567890n;
+console.log(n);
+
+Last me 'n' lagana compulsory.
+
+Logic:
+Limited bits → limited values.
+
+--------------------------------------------------------------------
+6. Null (Most Confusing, Most Important)
+--------------------------------------------------------------------
+
+let weather = null;
+
+Meaning:
+Intentional absence of value.
+
+Developer khud bol raha hai:
+“Is variable me kuch nahi hona chahiye”.
+
+--------------------------------------------------------------------
+Null vs Undefined (Real World Example)
+--------------------------------------------------------------------
+
+Weather API Example:
+
+Case 1:
+City exists + data mil gaya
+return 25;
+
+Case 2:
+City exists, data available nahi
+return null;
+
+Case 3:
+City hi exist nahi karti
+return undefined;
+
+--------------------------------------------------------------------
+Final Difference
+--------------------------------------------------------------------
+
+undefined:
+- JavaScript assign karta hai
+- Unintentional absence
+
+null:
+- Developer assign karta hai
+- Intentional absence
+
+Sir’s Golden Line:
+Undefined = Unintentional absence
+Null = Intentional absence
+
+====================================================================
+End of Lecture 2
+====================================================================
+*/
