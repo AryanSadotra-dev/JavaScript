@@ -233,6 +233,7 @@ Symbols are used to create unique values.
 Example:
 const id1 = Symbol('id');
 const id2 = Symbol('id');
+console.log(id2==id1);
 
 Even though descriptions are same, symbols are always unique.
 
@@ -246,7 +247,8 @@ typeof 10        → number
 typeof "hi"      → string
 typeof true      → boolean
 typeof undefined → undefined
-typeof null      → object (legacy bug)
+typeof symbol    → symbol
+typeof null      → object (sabse bada bug hai known as 'legecy bug')
 
 typeof null returning object is a known JavaScript bug kept for
 backward compatibility.
@@ -265,13 +267,14 @@ Array
 --------------------------------------------------------------------
 Example:
 let arr = [10, 20, 30, "Rohit", true];
+console.log(arr);
 
 Arrays can store multiple values and mixed data types.
 
 Arrays are mutable.
 
 --------------------------------------------------------------------
-Object
+Object- are the foundation
 --------------------------------------------------------------------
 Objects store data in key-value pairs.
 
@@ -290,6 +293,13 @@ Function as Data Type
 --------------------------------------------------------------------
 Functions are first-class citizens in JavaScript.
 
+example :
+let s = function add()
+        {
+        console.log("Hello);
+        }
+console.log(s);
+
 They can be stored in variables, passed as arguments, and returned from
 other functions.
 
@@ -298,9 +308,8 @@ SECTION 4: IMMUTABILITY VS MUTABILITY
 --------------------------------------------------------------------
 Primitive data types are immutable.
 
-Example:
-let a = 10;
-a = 20;
+Example: let a = 10;
+         a = 20;
 
 The value 10 is not changed. A new value 20 is created at a new memory
 location.
@@ -308,7 +317,7 @@ location.
 Strings are also immutable.
 
 --------------------------------------------------------------------
-Non-Primitive Data Types
+Non-Primitive Data Types (in sab ka type of array hi niklega)
 --------------------------------------------------------------------
 Arrays and objects are mutable.
 
