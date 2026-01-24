@@ -1,0 +1,375 @@
+/*
+====================================================================
+📘 Lecture Notes: Memory Management (Stack, Heap, RAM)
+(First-Principle Engineering Approach – JavaScript Internals)
+====================================================================
+
+This lecture explains:
+- Where data is stored
+- How memory is addressed
+- Why stack and heap exist
+- Why addresses are stored instead of values
+- How JavaScript optimizes memory internally
+- How loops, primitives, objects, strings actually work
+- Why garbage collection is needed
+- How engines optimize small integers
+
+This is NOT interview theory.
+This is ENGINEERING THINKING.
+
+====================================================================
+1. Where Code Lives vs Where Code Runs
+====================================================================
+
+Applications like:
+- Instagram
+- WhatsApp
+- PUBG
+
+Are stored on:
+- Hard Disk / SSD (Permanent Storage)
+
+But to RUN:
+- Code must be loaded into RAM
+
+Flow:
+Hard Disk / SSD → RAM → CPU
+
+Reason:
+- SSD is slow
+- RAM is very fast
+- CPU executes instructions only from RAM
+
+RAM:
+- Temporary storage
+- Cleared when power is off
+
+====================================================================
+2. What Is Memory Management?
+====================================================================
+
+Memory management means:
+- Deciding WHERE data should be stored
+- HOW it should be accessed
+- HOW it should be updated
+- HOW unused memory should be freed
+
+This is an ENGINEERING problem, not memorization.
+
+====================================================================
+3. Byte-Addressable Memory
+====================================================================
+
+Assume:
+RAM size = 16 bytes
+
+Rule:
+- Each byte gets a UNIQUE address
+- Addressing is byte-based
+
+Addresses:
+0, 1, 2, 3, ... 15
+
+Each address:
+- Points to exactly 1 byte
+- 1 byte = 8 bits
+
+To represent 16 addresses:
+2⁴ = 16 → need 4 bits
+
+====================================================================
+4. Why Addresses Are Needed
+====================================================================
+
+Example:
+a = 10
+b = 20
+
+Problem:
+There may be MANY 20s in memory.
+
+Question:
+Which 20 belongs to b?
+
+Solution:
+- Each variable must map to a UNIQUE address
+- Variable → Address → Value
+
+Without addresses:
+- Data corruption
+- Wrong updates
+
+====================================================================
+5. Address Resolution (Behind the Scenes)
+====================================================================
+
+Programmer writes:
+a = 10
+
+Internally:
+- Variable name is replaced by address
+- Code works with addresses, NOT names
+
+So:
+a, b, c → ONLY for programmer
+Addresses → for system
+
+No separate mapping table is needed.
+
+====================================================================
+6. Stack and Heap: Why Two Areas Exist
+====================================================================
+
+RAM is divided into TWO logical parts:
+1. Stack
+2. Heap
+
+This division exists to solve DIFFERENT problems.
+
+====================================================================
+7. Stack Memory (Sequential Allocation)
+====================================================================
+
+Stack properties:
+- Memory allocated sequentially
+- One after another
+- Fixed-size data works best
+- Very fast
+
+Example:
+a = 10
+b = 20
+c = 30
+
+Stored as:
+[10][20][30]
+
+Rule:
+- Last In, First Out (LIFO)
+- New data always comes AFTER previous
+
+Stack size:
+- Small (KB / few MB)
+
+====================================================================
+8. Heap Memory (Flexible Allocation)
+====================================================================
+
+Heap properties:
+- Memory allocated anywhere space is available
+- Non-contiguous
+- Large size (MBs / GBs)
+- Slower than stack
+
+Used for:
+- Strings
+- Objects
+- Arrays
+- Dynamic data
+
+====================================================================
+9. Stack vs Heap Storage Strategy
+====================================================================
+
+Stack:
+- Stores VALUES directly (numbers)
+- Also stores ADDRESSES (references)
+
+Heap:
+- Stores actual dynamic data
+
+When heap is used:
+- Stack stores ADDRESS of heap data
+- Access becomes 2-step:
+  Stack → Heap → Value
+
+====================================================================
+10. Why Stack Alone Is NOT Enough
+====================================================================
+
+Problem with stack:
+- Fixed-size slots
+- Cannot resize data in-place
+
+Example:
+b = 20 (1 byte assumed)
+Later:
+b = "sun" (3 bytes)
+
+Impossible to fit:
+- Overwrites memory
+- Breaks structure
+- Forces shifting (slow)
+
+Shifting causes:
+- Address changes
+- Multiple code updates
+- Performance loss
+
+====================================================================
+11. Why Heap Alone Is NOT Enough
+====================================================================
+
+Heap problem:
+- Data location can change
+- Address updates required everywhere
+
+If address is written directly in code:
+- Any relocation forces massive updates
+
+Solution:
+- Store ADDRESS in stack
+- Stack address remains stable
+- Only heap address changes
+
+====================================================================
+12. Final Stack–Heap Design
+====================================================================
+
+RULE:
+- Stack stores variable addresses
+- Heap stores actual data
+
+Benefits:
+- No mass address updates
+- Efficient memory reuse
+- Safe dynamic resizing
+
+====================================================================
+13. Garbage Collection (Why Needed)
+====================================================================
+
+Heap issue:
+- Data may become unused
+- Memory leaks possible
+
+Garbage Collector:
+1. Starts from stack
+2. Marks reachable heap objects
+3. Deletes unreferenced objects
+
+Languages:
+- JavaScript → Automatic GC
+- C++ → Manual delete
+
+====================================================================
+14. Primitive Data & Immutability
+====================================================================
+
+JavaScript rule:
+Primitive values are IMMUTABLE
+
+Meaning:
+- Value cannot be changed
+- New value = new memory
+
+Example:
+a = 10
+a = 20
+
+Result:
+- 10 remains untouched
+- 20 allocated separately
+- a points to new address
+
+====================================================================
+15. Why Primitives Are NOT Stored Directly in Stack
+====================================================================
+
+If primitives were stored in stack:
+- Every reassignment changes address
+- All references must be updated
+- Code becomes slow
+
+Solution:
+- Store primitives in heap
+- Stack stores address
+- Reassignment updates only address
+
+====================================================================
+16. Special Optimization: Small Integers (SMI)
+====================================================================
+
+Observation:
+- Numbers are frequently used
+- Creating heap objects repeatedly is slow
+
+Optimization:
+- Store small integers directly inside address bits
+
+Technique:
+- Use last bit as FLAG
+
+Last bit = 0 → small integer
+Last bit = 1 → heap reference
+
+Remaining bits store:
+- Actual number (for small ints)
+
+This avoids:
+- Heap allocation
+- Garbage collection
+- Memory lookup
+
+====================================================================
+17. Range of Small Integers
+====================================================================
+
+In 32-bit system:
+- Address size = 32 bits
+- 1 bit used as flag
+- 31 bits for number
+
+Range:
+- Positive: 0 to 2³⁰ - 1
+- Negative: -1 to -2³⁰
+
+Large numbers:
+- Stored normally in heap
+
+====================================================================
+18. Loop Optimization (Why This Matters)
+====================================================================
+
+Without optimization:
+- Each i++ creates new heap object
+- Heap search each iteration
+- Loop becomes slow
+
+With SMI:
+- i stored directly in address
+- Increment = simple arithmetic
+- No heap access
+- Extremely fast loops
+
+====================================================================
+19. Objects and Arrays
+====================================================================
+
+Objects:
+- Always stored in heap
+- Mutable
+- Size may grow
+
+Arrays:
+- Contiguous memory
+- Reallocated if size grows
+- Address updated in stack
+
+====================================================================
+20. Final Summary
+====================================================================
+
+✔ RAM is byte-addressable  
+✔ Variables map to addresses, not values  
+✔ Stack stores addresses  
+✔ Heap stores actual data  
+✔ Dynamic data → heap  
+✔ Garbage collector frees unused heap data  
+✔ JavaScript optimizes small integers using address bits  
+✔ Engineering = thinking, not memorization  
+
+====================================================================
+End of Memory Management Notes
+====================================================================
+*/
